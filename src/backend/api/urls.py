@@ -1,6 +1,46 @@
 from django.urls import path
-from . import views
+from .views import (
+    product_detail_view,
+    owner_create_view,
+    product_create_view,
+    product_list_view,
+    product_list_create_view,
+    owner_update_view,
+    owners_view,
+    owner_destroy_view,
+    ProductMixinAPIView,
+
+)
 
 urlpatterns = [
-    path('api/', views.api_home),
+    # Products
+
+    path('all/', ProductMixinAPIView.as_view()),
+    
+    path('all/<int:pk>/', ProductMixinAPIView.as_view()),
+
+
+
+
+
+
+
+
+    
+
+    path('products/<slug:product_slug>/', product_detail_view, name='product_detail'),
+
+    path('products/', product_create_view, name="create_product"),
+
+    path('<int:pk>/', product_list_create_view, name="products"),
+    path('c/', product_list_create_view, name="c"),
+
+
+
+
+    # Owners
+    path('owners/create/', owner_create_view, name='create_owner'),
+    path('owners/all/', owners_view, name='owners'),
+    path('owners/<int:pk>', owner_update_view, name='update_owner'),
+    path('owners/d/<int:pk>', owner_destroy_view, name='delete_owner'),
 ]
