@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
+from django.conf import settings
 
+User = settings.AUTH_USER_MODEL
 
 class Owner(models.Model):
     name = models.CharField(max_length=200)
@@ -18,6 +20,7 @@ class Owner(models.Model):
     
 
 class Product(models.Model):
+    user = models.ForeignKey(User, null=True, default=4, on_delete=models.SET_NULL)
     owner = models.ForeignKey('Owner', on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=6, decimal_places=3)
@@ -26,6 +29,10 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+    @property
+    def discount(self):
+        return f"{self.price}$"
 
     def __str__(self):
         return self.name

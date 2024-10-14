@@ -9,15 +9,19 @@ from .views import (
     owners_view,
     owner_destroy_view,
     ProductMixinAPIView,
-
 )
 
+from rest_framework.authtoken.views import obtain_auth_token
+
 urlpatterns = [
+    # Auth Token
+    path('auth/', obtain_auth_token),
+    
+
     # Products
-
-    path('all/', ProductMixinAPIView.as_view()),
+    # path('all/', ProductMixinAPIView.as_view()),
     
-    path('all/<int:pk>/', ProductMixinAPIView.as_view()),
+    # path('all/<int:pk>/', ProductMixinAPIView.as_view()),
 
 
 
@@ -28,7 +32,7 @@ urlpatterns = [
 
     
 
-    path('products/<slug:product_slug>/', product_detail_view, name='product_detail'),
+    path('products/<int:pk>/', product_detail_view, name='product_detail'),
 
     path('products/', product_create_view, name="create_product"),
 

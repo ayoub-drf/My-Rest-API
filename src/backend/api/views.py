@@ -12,21 +12,23 @@ from rest_framework.generics import (
 
 from rest_framework import mixins, generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, IsAdminUser, DjangoModelPermissions
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
 
 from .permissions import IsStaffEditorPermissions
 
+from .authentication import token_auth_base
+from .mixins import StaffEditorPermissionsMixin
 
 class ProductMixinAPIView(
+                        StaffEditorPermissionsMixin,
                         mixins.ListModelMixin, generics.GenericAPIView,
                         mixins.RetrieveModelMixin, mixins.CreateModelMixin,
-                        mixins.UpdateModelMixin, mixins.DestroyModelMixin
+                        mixins.UpdateModelMixin, mixins.DestroyModelMixin,
                         ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    lookup_field = 'pk'
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsStaffEditorPermissions, DjangoModelPermissions]
+    # lookup_field = 'pk'
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk')
@@ -42,6 +44,7 @@ class ProductMixinAPIView(
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
     
+
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
     
@@ -69,6 +72,8 @@ class ProductCreateAPIView(generics.CreateAPIView):
     serializer_class = ProductSerializer
 
     def perform_create(self, serializer):
+        email = serializer.validated_data.pop('email')
+        # name = serializer.validated_data.get('name') or None
         serializer.save()
 
 product_create_view = ProductCreateAPIView.as_view()
