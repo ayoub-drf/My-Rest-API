@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('api.urls')),
     
     path('api/', include('drf.routers')),
+    path('search/', include('search.urls')),
 ]

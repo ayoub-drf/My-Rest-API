@@ -24,10 +24,10 @@ class ProductQuerySet(models.QuerySet):
         return self.filter(public=True)
     
     def search(self, query, user=None):
-        lookup = Q(title_icontains=query) | Q(slug_icontains=query)
-        qs = self.filter(lookup)
+        lookup = Q(name__icontains=query) | Q(slug__icontains=query)
+        qs = self.is_public().filter(lookup)
         if user is not None:
-            qs = qs.filter(user=user)
+            return self.filter(lookup, user=user)
 
         return qs
     
@@ -36,7 +36,7 @@ class ProductManager(models.Manager):
         return ProductQuerySet(self.model, using=self._db)
     
     def search(self, query, user=None):
-        return self.get_queryset().is_public().search(query=query, user=user)
+        return self.get_queryset().search(query=query, user=user)
 
 class Product(models.Model):
     user = models.ForeignKey(User, null=True, default=4, on_delete=models.SET_NULL)
@@ -45,6 +45,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=6, decimal_places=3)
     slug = models.SlugField(unique=True)
     public = models.BooleanField(default=True)
+
+    objects = ProductManager()
 
     class Meta:
         verbose_name = "Product"
