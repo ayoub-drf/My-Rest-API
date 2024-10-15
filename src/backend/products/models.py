@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.db.models import Q
+from random import choice
 
 User = settings.AUTH_USER_MODEL
 
@@ -18,6 +19,7 @@ class Owner(models.Model):
 
     def get_absolute_url(self):
         return reverse("Owner_detail", kwargs={"pk": self.pk})
+
 
 class ProductQuerySet(models.QuerySet):
     def is_public(self):
@@ -38,6 +40,8 @@ class ProductManager(models.Manager):
     def search(self, query, user=None):
         return self.get_queryset().search(query=query, user=user)
 
+TAG_MODEL_VALUES = ['cars', 'videos', 'girls', 'boys']
+
 class Product(models.Model):
     user = models.ForeignKey(User, null=True, default=4, on_delete=models.SET_NULL)
     owner = models.ForeignKey('Owner', on_delete=models.CASCADE)
@@ -52,6 +56,12 @@ class Product(models.Model):
         verbose_name = "Product"
         verbose_name_plural = "Products"
 
+    def is_public(self):
+        return self.public
+
+    def get_tag_list(self):
+        return [choice(TAG_MODEL_VALUES)]
+    
     @property
     def discount(self):
         return f"{self.price}$"
