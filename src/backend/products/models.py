@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
+from django.db.models import Q
 
 User = settings.AUTH_USER_MODEL
 
@@ -17,7 +18,25 @@ class Owner(models.Model):
 
     def get_absolute_url(self):
         return reverse("Owner_detail", kwargs={"pk": self.pk})
+
+class ProductQuerySet(models.QuerySet):
+    def is_public(self):
+        return self.filter(public=True)
     
+    def search(self, query, user=None):
+        lookup = Q(title_icontains=query) | Q(slug_icontains=query)
+        qs = self.filter(lookup)
+        if user is not None:
+            qs = qs.filter(user=user)
+
+        return qs
+    
+class ProductManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return ProductQuerySet(self.model, using=self._db)
+    
+    def search(self, query, user=None):
+        return self.get_queryset().is_public().search(query=query, user=user)
 
 class Product(models.Model):
     user = models.ForeignKey(User, null=True, default=4, on_delete=models.SET_NULL)
@@ -25,6 +44,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.DecimalField(max_digits=6, decimal_places=3)
     slug = models.SlugField(unique=True)
+    public = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Product"

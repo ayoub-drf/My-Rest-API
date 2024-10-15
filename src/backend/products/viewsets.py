@@ -3,7 +3,7 @@ from products.serializers import ProductSerializer
 from products.models import Product
 from api.mixins import UserQuerySetMixin
 
-class ProductModelViewSet(UserQuerySetMixin, viewsets.ModelViewSet):
+class ProductModelViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
