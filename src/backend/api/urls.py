@@ -13,9 +13,16 @@ from .views import (
 
 from rest_framework.authtoken.views import obtain_auth_token
 
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView, TokenObtainPairView
+
+
 urlpatterns = [
-    path('', product_custom_api_view, name='products'),
-    path('<int:pk>/', product_custom_api_view, name='products-detail'),
+    path('products/', product_custom_api_view, name='products'),
+    path('products/<int:pk>/', product_custom_api_view, name='products-detail'),
+
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
 
 
