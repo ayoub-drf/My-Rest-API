@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'corsheaders',
 
     # Third Party API Services
     'algoliasearch_django',
@@ -65,8 +67,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 2
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 100
 }
 
 MIDDLEWARE = [
@@ -77,6 +79,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'drf.urls'
@@ -156,3 +159,16 @@ ALGOLIA = {
     'APPLICATION_ID': 'HMXXDAE9DC',
     'API_KEY': '4a8f784b8d399c13c1802f504f7d785c'
 }
+
+SIMPLE_JWT = {
+    'AUTH_HEADERS_TYPE': ['Bearer'],
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=10),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(seconds=30),
+}
+
+# CORS_URLS_REGES = r'api/.*'
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ORIGINS = [
+#     'https://google.com/',
+#     # ...
+# ]
